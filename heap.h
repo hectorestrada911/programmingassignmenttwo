@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-// Weight array for heap comparisons
+// Weight array for comparasions of the heap. 
 extern int weightArr[];
 
 struct MinHeap {
