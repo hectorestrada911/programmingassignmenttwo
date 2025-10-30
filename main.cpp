@@ -11,6 +11,11 @@ int leftArr[100];
 int rightArr[100];
 int nextFree = 0;
 
+// Next steps
+int buildEncodingTree(int startIdx);
+void generateCodes(int root, string codes[]);
+void encodeMessage(const string& filename, string codes[]);
+
 void createLeafNodes(int freq[]) {
     nextFree = 0;
     for (int i = 0; i < 26; i++) {
@@ -46,5 +51,20 @@ int main() {
     // Make leaf nodes
     createLeafNodes(freq);
     
+    // Call stubs
+    int root = buildEncodingTree(0);
+    (void)root;
+    
     return 0;
+}
+
+// Stubs
+int buildEncodingTree(int startIdx) {
+    return -1;
+}
+
+void generateCodes(int root, string codes[]) {
+}
+
+void encodeMessage(const string& filename, string codes[]) {
 }
