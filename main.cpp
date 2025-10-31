@@ -2,6 +2,7 @@
 #include <fstream>
 #include <stack>
 #include <string>
+#include "heap.h"
 using namespace std;
 
 // Arrays for tree
@@ -51,16 +52,38 @@ int main() {
     // Make leaf nodes
     createLeafNodes(freq);
     
-    // Call stubs
-    int root = buildEncodingTree(0);
-    (void)root;
+    // Build tree
+    int root = buildEncodingTree(nextFree);
     
     return 0;
 }
 
-// Stubs
 int buildEncodingTree(int startIdx) {
-    return -1;
+    if (nextFree <= 1) return 0;
+    
+    MinHeap heap;
+    
+    // Add all leaf nodes to heap
+    for (int i = 0; i < nextFree; i++) {
+        heap.push(i);
+    }
+    
+    // Combine nodes until one remains
+    while (heap.size > 1) {
+        int left = heap.pop();
+        int right = heap.pop();
+        
+        // Create parent node
+        int parent = nextFree;
+        weightArr[parent] = weightArr[left] + weightArr[right];
+        leftArr[parent] = left;
+        rightArr[parent] = right;
+        nextFree++;
+        
+        heap.push(parent);
+    }
+    
+    return heap.pop();
 }
 
 void generateCodes(int root, string codes[]) {
