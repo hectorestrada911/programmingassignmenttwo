@@ -55,6 +55,10 @@ int main() {
     // Build tree
     int root = buildEncodingTree(nextFree);
     
+    // Get codes
+    string codes[26];
+    generateCodes(root, codes);
+    
     return 0;
 }
 
@@ -87,6 +91,30 @@ int buildEncodingTree(int startIdx) {
 }
 
 void generateCodes(int root, string codes[]) {
+    if (root == -1) return;
+    
+    stack<pair<int, string>> st;
+    st.push({root, ""});
+    
+    while (!st.empty()) {
+        int node = st.top().first;
+        string path = st.top().second;
+        st.pop();
+        
+        // If leaf node, save the code
+        if (leftArr[node] == -1 && rightArr[node] == -1) {
+            int charIdx = charArr[node] - 'a';
+            codes[charIdx] = path;
+        }
+        
+        // Add children to stack
+        if (rightArr[node] != -1) {
+            st.push({rightArr[node], path + "1"});
+        }
+        if (leftArr[node] != -1) {
+            st.push({leftArr[node], path + "0"});
+        }
+    }
 }
 
 void encodeMessage(const string& filename, string codes[]) {
