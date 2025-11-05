@@ -31,8 +31,6 @@ void createLeafNodes(int freq[]) {
 }
 
 int main() {
-    cout << "Starting encoder..." << endl;
-    
     // Read file and count letters
     ifstream file("input.txt");
     string text;
@@ -58,6 +56,9 @@ int main() {
     // Get codes
     string codes[26];
     generateCodes(root, codes);
+    
+    // Print results
+    encodeMessage("input.txt", codes);
     
     return 0;
 }
@@ -90,32 +91,73 @@ int buildEncodingTree(int startIdx) {
     return heap.pop();
 }
 
+struct NodePath {
+    int node;
+    string path;
+};
+
 void generateCodes(int root, string codes[]) {
     if (root == -1) return;
     
-    stack<pair<int, string>> st;
-    st.push({root, ""});
+    stack<NodePath> st;
+    NodePath start;
+    start.node = root;
+    start.path = "";
+    st.push(start);
     
     while (!st.empty()) {
-        int node = st.top().first;
-        string path = st.top().second;
+        NodePath current = st.top();
         st.pop();
         
         // If leaf node, save the code
-        if (leftArr[node] == -1 && rightArr[node] == -1) {
-            int charIdx = charArr[node] - 'a';
-            codes[charIdx] = path;
+        if (leftArr[current.node] == -1 && rightArr[current.node] == -1) {
+            int charIdx = charArr[current.node] - 'a';
+            codes[charIdx] = current.path;
         }
         
         // Add children to stack
-        if (rightArr[node] != -1) {
-            st.push({rightArr[node], path + "1"});
+        if (rightArr[current.node] != -1) {
+            NodePath right;
+            right.node = rightArr[current.node];
+            right.path = current.path + "1";
+            st.push(right);
         }
-        if (leftArr[node] != -1) {
-            st.push({leftArr[node], path + "0"});
+        if (leftArr[current.node] != -1) {
+            NodePath left;
+            left.node = leftArr[current.node];
+            left.path = current.path + "0";
+            st.push(left);
         }
     }
 }
 
 void encodeMessage(const string& filename, string codes[]) {
+    // Print code table
+    cout << "Character : Code" << endl;
+    for (int i = 0; i < 26; i++) {
+        if (!codes[i].empty()) {
+            cout << (char)('a' + i) << " : " << codes[i] << endl;
+        }
+    }
+    
+    cout << endl << "Encoded message:" << endl;
+    
+    // Read file and encode
+    ifstream file(filename);
+    string text;
+    string encoded = "";
+    
+    if (file.is_open()) {
+        while (getline(file, text)) {
+            for (char c : text) {
+                if (isalpha(c)) {
+                    char lower = tolower(c);
+                    encoded += codes[lower - 'a'];
+                }
+            }
+        }
+        file.close();
+    }
+    
+    cout << encoded << endl;
 }
